@@ -1,31 +1,15 @@
-# Добавьте в начало файла:
+from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
+from telegram.ext import ContextTypes, ConversationHandler, MessageHandler, filters, CallbackQueryHandler, CommandHandler
+import sqlite3
 from config import ADMIN_IDS
 
 def is_admin(user_id):
     """Проверка, является ли пользователь администратором"""
     return user_id in ADMIN_IDS
 
-# И добавьте проверку в начало каждой админ-функции:
-async def admin_panel(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Админ-панель"""
-    if not is_admin(update.effective_user.id):
-        await update.message.reply_text("❌ Доступ запрещен")
-        return
-    
-import sqlite3
-from telegram import Update, InlineKeyboardButton, InlineKeyboardMarkup
-from telegram.ext import ContextTypes, ConversationHandler, MessageHandler, filters, CallbackQueryHandler
-
 # Состояния для добавления/редактирования товаров
 ADD_PART, EDIT_PART, DELETE_PART = range(3)
 GET_ARTICLE, GET_NAME, GET_DESCRIPTION, GET_PRICE, GET_CATEGORY = range(5, 10)
-
-# ID администраторов (замените на свои)
-ADMIN_IDS = [890219846, 890219846]  # Ваш user_id
-
-def is_admin(user_id):
-    """Проверка, является ли пользователь администратором"""
-    return user_id in ADMIN_IDS
 
 async def admin_panel(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Админ-панель"""
