@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Админ-панель бота</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        table { border-collapse: collapse; width: 100%; }
+        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+        th { background-color: #f2f2f2; }
+        .form-group { margin: 10px 0; }
+        button { margin: 5px; }
+    </style>
+</head>
+<body>
+    <h1>Админ-панель управления товарами</h1>
+
+    <h2>Добавить товар</h2>
+    <form id="addForm">
+        <input type="text" name="article" placeholder="Артикул" required>
+        <input type="text" name="name" placeholder="Название" required>
+        <input type="text" name="description" placeholder="Описание">
+        <input type="number" name="price" placeholder="Цена" step="0.01" required>
+        <input type="text" name="category" placeholder="Категория">
+        <button type="submit">Добавить</button>
+    </form>
+
+    <h2>Список товаров</h2>
+    <table id="partsTable">
+        <thead>
+            <tr>
+                <th>Артикул</th>
+                <th>Название</th>
+                <th>Цена</th>
+                <th>Категория</th>
+                <th>Действия</th>
+            </tr>
+        </thead>
+        <tbody></tbody>
+    </table>
+
+    <script>
+        // Загрузка товаров
+        async function loadParts() {
+            const response = await fetch('/admin/parts');
+            const parts = await response.json();
+            
+            const tbody = document.querySelector('#partsTable tbody');
+            tbody.innerHTML = '';
+            
+            parts.forEach(part => {
+                const row = document.createElement('tr');
+                row.innerHTML = `
+                    <td>${part.article}</td>
+                    <td>${part.name}</td>
+                    <td>${part.price} руб.</td>
+                    <td>${part.category}</td>
+                    <td>
+                        <button onclick="editPart('${part.article}')">✏️</button>
+                        <button onclick="deletePart('${part.article}')">🗑️</button>
+                    </td>
+                `;
+                tbody.appendChild(row);
+            });
+        }
+
+        // Добавление товара
+        document.getElementById('addForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const formData = new FormData(e.target);
+            const data = Object.fromEntries(formData);
+            
+            const response = await fetch('/admin/parts/add', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(data)
+            });
+            
+            if (response.ok) {
+                alert('Товар добавлен!');
+                e.target.reset();
+                loadParts();
+            }
+        });
+
+        // Загрузка при старте
+        loadParts();
+    </script>
+</body>
+</html>

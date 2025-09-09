@@ -6,7 +6,7 @@ from keyboards import get_main_menu_keyboard
 
 @check_subscription
 async def show_cart(update: Update, context: ContextTypes.DEFAULT_TYPE):
-    """Показать корзину (только для подписанных пользователей)"""
+    """Показать корзину"""
     user_id = update.effective_user.id
     cart_items = get_user_cart_items(user_id)
     
@@ -14,7 +14,6 @@ async def show_cart(update: Update, context: ContextTypes.DEFAULT_TYPE):
         await update.message.reply_text("🛒 Ваша корзина пуста", reply_markup=get_main_menu_keyboard())
         return
     
-    # Создаем клавиатуру корзины
     keyboard = []
     total = 0
     
@@ -38,7 +37,6 @@ async def show_cart(update: Update, context: ContextTypes.DEFAULT_TYPE):
     cart_text = f"🛒 Ваша корзина:\n\nОбщая сумма: {total} руб."
     await update.message.reply_text(cart_text, reply_markup=reply_markup)
 
-@check_subscription
 async def cart_button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE):
     """Обработчик кнопок корзины"""
     query = update.callback_query
@@ -49,13 +47,26 @@ async def cart_button_handler(update: Update, context: ContextTypes.DEFAULT_TYPE
     
     if data.startswith("cart_inc_"):
         item_id = int(data.split("_")[2])
-        # Логика увеличения количества
-        # ...
+        # Увеличиваем количество
+        update_cart_item(item_id, 1)  # Просто добавляем 1
+        await query.answer("Количество увеличено")
         
     elif data.startswith("cart_dec_"):
         item_id = int(data.split("_")[2])
-        # Логика уменьшения количества
-        # ...
+        # Уменьшаем количество
+        update_cart_item(item_id, -1)  # Уменьшаем на 1
+        await query.answer("Количество уменьшено")
+    
+    elif data.startswith("cart_del_"):
+        item_id = int(data.split("_")[2])
+        delete_cart_item(item_id)
+        await query.answer("Товар удален")
+    
+    elif data == "clear_cart":
+        clear_user_cart(user_id)
+        await query.answer("Корзина очищена")
+        await query.edit_message_text("🗑 Корзина очищена")
+        return
     
     # Обновляем сообщение корзины
     await show_cart(update, context)

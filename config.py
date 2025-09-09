@@ -5,7 +5,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Токен бота от @BotFather
-BOT_TOKEN = os.getenv('8209388873:AAFZKjUJIDyI8BGSRE2Pp-nrozZrV-_KtaE', 'ВАШ_ТОКЕН_БОТА')
+BOT_TOKEN = os.getenv('BOT_TOKEN', 'ВАШ_ТОКЕН_БОТА')
 
 # Токен платежного провайдера (от @BotFather после настройки платежей)
 PROVIDER_TOKEN = os.getenv('PROVIDER_TOKEN', 'ВАШ_ПЛАТЕЖНЫЙ_ТОКЕН')
@@ -18,7 +18,7 @@ SUBSCRIPTION_PRICE = 499  # Цена подписки в рублях
 SUBSCRIPTION_DAYS = 30    # Длительность подписки в днях
 
 # Настройки бота
-ADMIN_IDS = [123456789, 987654321]  # ID администраторов бота (для уведомлений)
+ADMIN_IDS = [890219846, 890219846]  # ID администраторов бота (для уведомлений)
 
 # Настройки поиска
 SEARCH_RESULTS_LIMIT = 10  # Максимальное количество результатов поиска
